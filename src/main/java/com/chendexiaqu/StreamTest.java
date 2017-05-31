@@ -10,26 +10,27 @@ public class StreamTest {
 //        testMap();
 //        testFilter();
 //        testReduce();
-        testThreeReduce();
-    }
 
-    private static void testThreeReduce() {
         String[] strArray = {"abc", "mno", "xyz"};
         List<String> strList = Arrays.asList(strArray);
 
+//        testThreeReduce(strList);
+//        reduceTest(strList);
+
+        parallelReduceTest(strList);
+
+//        parallelReduceTest2(strList);
+    }
+
+    private static void testThreeReduce(List<String> strList) {
+
         String reduce = strList.stream().reduce("", (x, y) -> {
-            System.out.println("x 的值" + x);
-            System.out.println("y 的值" + y);
+            System.out.println("x value: " + x);
+            System.out.println("y value: " + y);
             return x + y;
         });
         System.out.println(reduce);
 
-
-//        reduceTest(strList);
-
-//        parallelReduceTest(strList);
-
-//        parallelReduceTest2(strList);
     }
 
     private static void reduceTest(List<String> strList) {
@@ -58,7 +59,7 @@ public class StreamTest {
                 },
                 (a, b) -> {
                     System.out.println("combiner: a[" + a + "] b[" + b + "]");
-                    return 1000000;
+                    return 100000;
                 }
         );
         System.out.println("parallelStreamResult: " + parallelStreamResult);
@@ -103,7 +104,7 @@ public class StreamTest {
 
     private static void testMap() {
         List<String> strings = Arrays.asList("haha", "hehe", "sssss", "nojklj");
-        List<String> outPut = strings.stream().map(String::toLowerCase).collect(Collectors.toList());
+        List<String> outPut = strings.stream().map(String::toUpperCase).collect(Collectors.toList());
         System.out.println(outPut);
     }
 

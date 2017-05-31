@@ -1,11 +1,13 @@
 package com.chendexiaqu;
 
 import com.google.common.base.Stopwatch;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,21 +19,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.reducing;
 
-public class YahooFinance {
+public class Finance {
 
     private Runnable r1 = () -> { System.out.println(this); };
     private Runnable r2 = () -> { System.out.println(toString()); };
 
     public String toString() {  return "Hello, world"; }
 
-    public static BigDecimal getPrice(final String ticker) {
+    public static int getPrice(final String ticker) {
         try {
-            final URL url = new URL("http://ichart.finance.yahoo.com/table.csv?s=" + ticker);
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            final String data = reader.lines().skip(1).findFirst().get();
-            final String[] dataItems = data.split(",");
-            return new BigDecimal(dataItems[dataItems.length - 1]);
+            return Tickers.symbolMaps.get(ticker);
         } catch(Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -57,7 +56,7 @@ public class YahooFinance {
         );
         Stream<Integer> outputStream = inputStream.
                 flatMap((childList) -> childList.stream());
-        outputStream.filter(e -> e.intValue() > 2).forEach(System.out::println);
+        outputStream.filter(e -> e > 2).forEach(System.out::println);
     }
 
     private static void test_four() {
@@ -77,17 +76,16 @@ public class YahooFinance {
     }
 
     private static void test_six() {
-        new YahooFinance().r1.run();
-        new YahooFinance().r2.run();
+        new Finance().r1.run();
+        new Finance().r2.run();
     }
 
+
     private static void test_one() {
-        final BigDecimal HUNDRED = new BigDecimal("20");
         System.out.println("Stocks priced over $20 are " +
                 Tickers.symbols
-                        .stream()
-                        .filter(symbol -> YahooFinance.getPrice(symbol).compareTo(HUNDRED) > 0)
-                        .sorted()
+                        .parallelStream()
+                        .filter(symbol -> Finance.getPrice(symbol) > 20)
                         .collect(joining(", ")));
     }
 
@@ -102,7 +100,7 @@ public class YahooFinance {
                 stocksPricedUnder500.add(stock);
         }
 
-        StockInfo highPriced = new StockInfo("", BigDecimal.ZERO);
+        StockInfo highPriced = new StockInfo("", 0);
         for(StockInfo stock : stocksPricedUnder500) {
             highPriced = StockUtil.pickHigh(highPriced, stock);
         }

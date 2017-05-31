@@ -24,7 +24,7 @@ public class FunctionalTest {
 //        testFunction();
 //        testUnaryOperator();
 //        testBinaryOperator();
-//        testMethodReference();
+        testMethodReference();
     }
 
     private static void testBinaryOperator() {

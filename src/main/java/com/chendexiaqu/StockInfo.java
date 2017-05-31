@@ -1,11 +1,9 @@
 package com.chendexiaqu;
 
-import java.math.BigDecimal;
-
 public class StockInfo {
     public final String ticker;
-    public final BigDecimal price;
-    public StockInfo(final String symbol, final BigDecimal thePrice) {
+    public final int price;
+    public StockInfo(final String symbol, final int thePrice) {
         ticker = symbol;
         price = thePrice;
     }
